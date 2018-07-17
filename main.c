@@ -16,6 +16,9 @@ typedef struct test_rbtree_t {
   struct rb_node node;
 } rt ;
 
+typedef struct test_radixtree_t {
+  int val ;
+} xt ;
 
 int test_list()
 {
@@ -27,7 +30,9 @@ int test_list()
      p5 = {.val=14,};
   tl *p;
 
-  /* add */
+  /** 
+   * add 
+   */
   list_add(&p1.node,&head);
   list_add(&p2.node,&head);
   list_add(&p3.node,&head);
@@ -36,17 +41,23 @@ int test_list()
 
   printf("before: \n");
 
-  /* iterate */
+  /**
+   * iterate 
+   */
   list_for_each_entry(p,&head,node) {
     printf("p->val: %d\n",p->val);
   }
 
-  /* delete */
+  /**
+   * delete 
+   */
   list_del(&p2.node);
 
   printf("after: \n");
 
-  /* iterate again */
+  /**
+   * iterate again 
+   */
   list_for_each_entry(p,&head,node) {
     printf("p->val: %d\n",p->val);
   }
@@ -171,11 +182,29 @@ int test_rbtree()
   return 0;
 }
 
+int test_radixtree()
+{
+  RADIX_TREE(root, GFP_KERNEL);
+  xt nd1 = {.val = 12,},
+     nd2 = {.val = 1,},
+     nd3 = {.val = 100,},
+     nd4 = {.val = 50,};
+
+  /**
+   * insert
+   */
+
+
+  return 0;
+}
+
 int main()
 {
   test_list();
 
   test_rbtree();
+
+  test_radixtree();
 
   return 0;
 }
