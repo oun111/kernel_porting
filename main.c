@@ -17,27 +17,27 @@ typedef struct test_rbtree_t {
 } rt ;
 
 typedef struct test_radixtree_t {
-  int val ;
+  unsigned long val ;
 } xt ;
 
 int test_list()
 {
   LIST_HEAD(head) ;
-  tl p1 = {.val=10,},
-     p2 = {.val=11,},
-     p3 = {.val=12,},
-     p4 = {.val=13,},
-     p5 = {.val=14,};
+  tl px[] = {
+    {.val=10,},
+    {.val=11,},
+    {.val=12,},
+    {.val=13,},
+    {.val=14,},
+  } ;
   tl *p;
 
   /** 
    * add 
    */
-  list_add(&p1.node,&head);
-  list_add(&p2.node,&head);
-  list_add(&p3.node,&head);
-  list_add(&p4.node,&head);
-  list_add(&p5.node,&head);
+  for (int i=0;i<ARRAY_SIZE(px);i++) {
+    list_add(&px[i].node,&head);
+  }
 
   printf("before: \n");
 
@@ -51,7 +51,7 @@ int test_list()
   /**
    * delete 
    */
-  list_del(&p2.node);
+  list_del(&px[2].node);
 
   printf("after: \n");
 
@@ -123,12 +123,14 @@ int my_rb_tree_find(struct rb_root *root, int val, rt **item)
 int test_rbtree()
 {
   struct rb_root root = RB_ROOT;
-  rt rn1 = {.val=1,},
-     rn2 = {.val=12,},
-     rn3 = {.val=3,},
-     rn4 = {.val=300,},
-     rn5 = {.val=13,},
-     rn6 = {.val=0,};
+  rt rnx[] = {
+    {.val=1,},
+    {.val=12,},
+    {.val=3,},
+    {.val=300,},
+    {.val=13,},
+    {.val=0,},
+  } ;
   int ret = 0;
 
   /**
@@ -136,17 +138,9 @@ int test_rbtree()
    */
 
   /* insert tree node */
-  my_rb_tree_insert(&root,&rn1);
-
-  my_rb_tree_insert(&root,&rn2);
-
-  my_rb_tree_insert(&root,&rn3);
-
-  my_rb_tree_insert(&root,&rn4);
-
-  my_rb_tree_insert(&root,&rn5);
-
-  my_rb_tree_insert(&root,&rn6);
+  for (int i=0;i<ARRAY_SIZE(rnx);i++) {
+    my_rb_tree_insert(&root,&rnx[i]);
+  }
 
   /**
    * iterate
@@ -170,7 +164,7 @@ int test_rbtree()
   /**
    * erase
    */
-  rb_erase(&rn3.node,&root);
+  rb_erase(&rnx[3].node,&root);
 
   /**
    * iterate
@@ -185,15 +179,42 @@ int test_rbtree()
 int test_radixtree()
 {
   RADIX_TREE(root, GFP_KERNEL);
-  xt nd1 = {.val = 12,},
-     nd2 = {.val = 1,},
-     nd3 = {.val = 100,},
-     nd4 = {.val = 50,};
+  xt ndx[] = {
+     {.val = 12,},
+     {.val = 1,},
+     {.val = 100,},
+     {.val = 50,},
+  };
+
+  radix_tree_init();
 
   /**
    * insert
    */
+  for (int i=0;i<ARRAY_SIZE(ndx);i++) {
+    radix_tree_insert(&root,ndx[i].val,&ndx[i]);
+    printf("inserting %ld %p\n",ndx[i].val,&ndx[i]);
+  }
 
+  /**
+   * lookup
+   */
+  unsigned long search = ndx[2].val;
+  xt *pxt = radix_tree_lookup(&root,search);
+  if (!pxt) {
+    printf("%s: not found\n",__func__);
+  } else {
+    printf("%s: found: %p -> %ld\n",__func__,pxt,pxt->val);
+  }
+
+  /**
+   * iteration
+   */
+  void **slot ;
+  struct radix_tree_iter itr ;
+  radix_tree_for_each_slot(slot,&root,&itr,0) {
+    printf("idx: %ld, %p\n",itr.index,*slot);
+  }
 
   return 0;
 }

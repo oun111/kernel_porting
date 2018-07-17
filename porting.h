@@ -11,6 +11,7 @@
 #include <stddef.h>
 #include <stdlib.h>
 #include <stdint.h>
+#include <stdio.h>
 #include <string.h>
 #include <errno.h>
 #include "mem.h"
@@ -81,6 +82,8 @@
 #define __GFP_RETRY_MAYFAIL ((__force gfp_t)___GFP_RETRY_MAYFAIL)
 #define __GFP_NOFAIL  ((__force gfp_t)___GFP_NOFAIL)
 #define __GFP_NORETRY ((__force gfp_t)___GFP_NORETRY)
+#define __GFP_NOWARN  ((__force gfp_t)___GFP_NOWARN)
+#define __GFP_ACCOUNT ((__force gfp_t)___GFP_ACCOUNT)
 
 #define GFP_KERNEL  (__GFP_RECLAIM | __GFP_IO | __GFP_FS)
 
