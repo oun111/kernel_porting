@@ -41,6 +41,7 @@
 #else
 #include <string.h>
 #include <errno.h>
+#include <ctype.h>
 #include "gfp.h"
 #include "kernel.h"
 #include "bitmap.h"

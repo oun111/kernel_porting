@@ -11,6 +11,7 @@
 #include <asm-generic/int-ll64.h>
 #include "compiler.h"
 
+#undef __BIG_ENDIAN
 
 /**
  * porting from include/linux/poison.h
@@ -228,6 +229,19 @@ typedef __u64 u64 ;
 #endif
 
 
+
+/**
+ * porting from include/asm-generic/page.h
+ */
+#define PAGE_SHIFT  12
+#ifdef __ASSEMBLY__
+#define PAGE_SIZE (1 << PAGE_SHIFT)
+#else
+#define PAGE_SIZE (1UL << PAGE_SHIFT)
+#endif
+#define PAGE_MASK (~(PAGE_SIZE-1))
+
+
 /**
  * porting from include/linux/slab.h
  */
@@ -285,6 +299,15 @@ static inline void * __must_check ERR_PTR(long error)
 #define BUILD_BUG_ON_MSG(cond, msg) /*(0)*/
 
 //
+
+
+#ifndef raw_copy_to_user
+# define raw_copy_to_user(dst, src, size) memcpy(dst,src,size)
+#endif
+
+#ifndef raw_copy_from_user
+# define raw_copy_from_user(dst, src, size) memcpy(dst,src,size)
+#endif
 
 
 #endif /* __PORTING_H__*/

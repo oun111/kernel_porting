@@ -2,17 +2,18 @@
 #include <stdlib.h>
 #include <stddef.h>
 #include <string.h>
+#include <ctype.h>
 #include "mm_porting.h"
 
 void* __malloc__(size_t sz)
 {
-  /* FIXME */
+  /* FIXME: don't use this */
   return malloc(sz);
 }
 
 void __free__(void *p)
 {
-  /* FIXME */
+  /* FIXME: don't use this */
   free(p);
 }
 

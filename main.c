@@ -1,9 +1,12 @@
 #include <stdio.h>
 #include <pthread.h>
 #include <stdint.h>
+#include <string.h>
+#include <ctype.h>
 #include "list.h"
 #include "rbtree.h"
 #include "radix-tree.h"
+#include "bitmap.h"
 
 
 typedef struct test_list_t {
