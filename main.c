@@ -154,11 +154,11 @@ int test_rbtree()
   /**
    * search
    */
-  ret = my_rb_tree_find(&root,10,&pos);
+  ret = my_rb_tree_find(&root,300,&pos);
   if (ret) {
-    printf("not found\n");
+    printf("%s: not found\n",__func__);
   } else {
-    printf("found %p, val %d\n",pos,pos->val);
+    printf("%s: found %p -> %d\n",__func__,pos,pos->val);
   }
 
   /**

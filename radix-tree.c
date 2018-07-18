@@ -39,9 +39,14 @@
 #include <linux/slab.h>
 #include <linux/string.h>
 #else
-
+#include <string.h>
+#include <errno.h>
+#include "gfp.h"
+#include "kernel.h"
+#include "bitmap.h"
 #include "radix-tree.h"
 #include "log2.h"
+#include "mm_porting.h"
 
 DEFINE_PER_CPU(struct ida_bitmap *, ida_bitmap);
 

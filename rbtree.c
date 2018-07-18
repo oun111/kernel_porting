@@ -25,7 +25,9 @@
 #include <linux/rbtree_augmented.h>
 #include <linux/export.h>
 #else
+#include <stddef.h>
 #include "porting.h"
+#include "mm_porting.h"
 #include "rbtree_augmented.h"
 #endif
 

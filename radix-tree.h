@@ -33,6 +33,9 @@
 #else
 #include "porting.h"
 #include "list.h"
+#include "bitops.h"
+#include "gfp.h"
+#include "kernel.h"
 #endif
 
 /*
@@ -664,5 +667,11 @@ struct ida_bitmap {
 };
 
 DECLARE_PER_CPU(struct ida_bitmap *, ida_bitmap);
+
+/*
+ * The IDR API does not expose the tagging functionality of the radix tree
+ * to users.  Use tag 0 to track whether a node has free space below it.
+ */
+#define IDR_FREE  0
 
 #endif /* _LINUX_RADIX_TREE_H */
