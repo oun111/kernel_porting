@@ -35,6 +35,8 @@ int test_list()
   } ;
   tl *p;
 
+  printf("\ntest link list tree\n\n");
+
   /** 
    * add 
    */
@@ -136,6 +138,8 @@ int test_rbtree()
   } ;
   int ret = 0;
 
+  printf("\ntest rb tree\n\n");
+
   /**
    * add 
    */
@@ -189,6 +193,8 @@ int test_radixtree()
      {.val = 50,},
   };
 
+  printf("\ntest radix tree\n\n");
+
   radix_tree_init();
 
   /**
@@ -222,6 +228,41 @@ int test_radixtree()
   return 0;
 }
 
+int test_bitmap()
+{
+  DECLARE_BITMAP(bmap1, 32);
+
+  printf("\ntest bitmap\n\n");
+
+  bitmap_zero(bmap1, 32);
+
+  printf("zero bits: 0x%lx\n",bmap1[0]);
+
+  __set_bit(8,bmap1);
+
+  printf("set 1 bit: 0x%lx\n",bmap1[0]);
+
+  bitmap_set(bmap1, 4, 2);
+
+  printf("set bits: 0x%lx\n",bmap1[0]);
+
+  __clear_bit(12,bmap1);
+
+  printf("clear 1 bit: 0x%lx\n",bmap1[0]);
+
+  printf("test 1 bit: %d\n",test_bit(13,bmap1));
+
+  bitmap_clear(bmap1, 10, 1);
+
+  printf("clear bits: 0x%lx\n",bmap1[0]);
+
+  bitmap_fill(bmap1, 3);
+
+  printf("fill bits: 0x%lx\n",bmap1[0]);
+
+  return 0;
+}
+
 int main()
 {
   test_list();
@@ -229,6 +270,8 @@ int main()
   test_rbtree();
 
   test_radixtree();
+
+  test_bitmap();
 
   return 0;
 }

@@ -127,6 +127,9 @@ struct callback_head {
 } __attribute__((aligned(sizeof(void *))));
 #define rcu_head callback_head
 
+#define DECLARE_BITMAP(name,bits) \
+  unsigned long name[BITS_TO_LONGS(bits)]
+
 //
 
 
