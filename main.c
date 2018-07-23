@@ -361,6 +361,8 @@ int test_llist()
 
 int test_hashtable()
 {
+#define hash_get(tbl,key)   ((tbl)[hash_min((key), HASH_BITS((tbl)))])
+
   DEFINE_HASHTABLE(htable,16);
   ht tx[] = {
     {.val=10,},
@@ -380,13 +382,13 @@ int test_hashtable()
    */
   for (int i=0;i<ARRAY_SIZE(tx);i++) {
     hash_add(htable,&tx[i].node,tx[i].val);
-    printf("adding %p -> %d\n",tx+i,tx[i].val);
+    printf("adding %p -> key %d\n",tx+i,tx[i].val);
   }
 
   /**
    * iterate
    */
-  printf("before: \n");
+  printf("hash contents: \n");
 
   hash_for_each_safe(htable,i,n,pt,node) {
     printf("h->val: %d\n",pt->val);
@@ -395,11 +397,11 @@ int test_hashtable()
   /**
    * fetch
    */
-  int key = 101 ;
-  struct hlist_head *pv = &htable[hash_min(key, HASH_BITS(htable))] ;
+  int key = 11 ;
+  struct hlist_head *pv = &hash_get(htable,key) ;
 
   if (!pv || hlist_empty(pv)) {
-    printf("found nothing by %d\n",key);
+    printf("found nothing by key %d\n",key);
   }
 
   hlist_for_each_entry_safe(pt,n,pv,node) {
