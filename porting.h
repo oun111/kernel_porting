@@ -82,6 +82,9 @@ enum migratetype {
 #undef EXPORT_SYMBOL
 #define EXPORT_SYMBOL(x)
 
+#undef EXPORT_SYMBOL_GPL
+#define EXPORT_SYMBOL_GPL(x)
+
 #ifndef WARN_ON_ONCE
 #define WARN_ON_ONCE(x)  ({\
   !!(x)?1:0; \
@@ -156,6 +159,8 @@ struct callback_head {
 
 typedef unsigned __bitwise gfp_t;
 
+typedef __u8 u8 ;
+typedef __u16 u16 ;
 typedef __u32 u32 ;
 typedef __u64 u64 ;
 
@@ -273,6 +278,18 @@ typedef __u64 u64 ;
 
 #ifndef local_irq_restore
 # define local_irq_restore(f) ({\
+  (void)f;\
+})
+#endif
+
+#ifndef raw_local_irq_save
+# define raw_local_irq_save(f) ({\
+  (void)f; \
+})
+#endif
+
+#ifndef raw_local_irq_restore
+# define raw_local_irq_restore(f) ({\
   (void)f;\
 })
 #endif

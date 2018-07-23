@@ -7,6 +7,7 @@
 #include "rbtree.h"
 #include "radix-tree.h"
 #include "bitmap.h"
+#include "llist.h"
 
 
 typedef struct test_list_t {
@@ -23,6 +24,14 @@ typedef struct test_radixtree_t {
   unsigned long val ;
 } xt ;
 
+typedef struct test_llist_t {
+  int val;
+  struct llist_node node ;
+} tll ;
+
+int g_caseCnt = 1;
+
+
 int test_list()
 {
   LIST_HEAD(head) ;
@@ -35,7 +44,7 @@ int test_list()
   } ;
   tl *p;
 
-  printf("\ntest link list tree\n\n");
+  printf("\n%d: test link list tree\n\n",g_caseCnt++);
 
   /** 
    * add 
@@ -138,7 +147,7 @@ int test_rbtree()
   } ;
   int ret = 0;
 
-  printf("\ntest rb tree\n\n");
+  printf("\n%d: test rb tree\n\n",g_caseCnt++);
 
   /**
    * add 
@@ -193,7 +202,7 @@ int test_radixtree()
      {.val = 50,},
   };
 
-  printf("\ntest radix tree\n\n");
+  printf("\n%d: test radix tree\n\n",g_caseCnt++);
 
   radix_tree_init();
 
@@ -232,7 +241,7 @@ int test_bitmap()
 {
   DECLARE_BITMAP(bmap1, 32);
 
-  printf("\ntest bitmap\n\n");
+  printf("\n%d: test bitmap\n\n",g_caseCnt++);
 
   bitmap_zero(bmap1, 32);
 
@@ -263,6 +272,87 @@ int test_bitmap()
   return 0;
 }
 
+int test_llist()
+{
+  LLIST_HEAD(head) ;
+  tll px[] = {
+    {.val=10,},
+    {.val=11,},
+    {.val=12,},
+    {.val=13,},
+    {.val=14,},
+  } ;
+  tll *p;
+#define is_head(e,h) ({\
+  struct llist_node *llp = &(e)->node ;\
+  struct llist_head *llh = container_of(llp,struct llist_head,first);\
+  (bool)(llh==(h));\
+})
+
+  printf("\n%d: test lockless link list\n\n",g_caseCnt++);
+
+  /** 
+   * add 
+   */
+  for (int i=0;i<ARRAY_SIZE(px);i++) {
+    llist_add(&px[i].node,&head);
+  }
+
+  printf("before: \n");
+
+  /**
+   * iterate 
+   */
+  llist_for_each_entry(p,&head,node) {
+
+    if (is_head(p,&head)) 
+      continue ;
+
+    printf("p->val: %d\n",p->val);
+  }
+
+  /**
+   * can only delete 1st entry
+   */
+  llist_del_first(&head);
+  llist_del_first(&head);
+
+  printf("after: \n");
+
+  /**
+   * iterate again 
+   */
+  llist_for_each_entry(p,&head,node) {
+
+    if (is_head(p,&head)) 
+      continue ;
+
+    printf("p->val: %d\n",p->val);
+  }
+
+  /**
+   * delete all
+   */
+
+  printf("clear list: \n");
+
+  llist_del_all(&head);
+
+  /**
+   * iterate again 
+   */
+  llist_for_each_entry(p,&head,node) {
+
+    if (is_head(p,&head)) 
+      continue ;
+
+    printf("p->val: %d\n",p->val);
+  }
+
+
+  return 0;
+}
+
 int main()
 {
   test_list();
@@ -272,6 +362,8 @@ int main()
   test_radixtree();
 
   test_bitmap();
+
+  test_llist();
 
   return 0;
 }
