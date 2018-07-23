@@ -5,3 +5,5 @@ Changes:
   Jul 23, 2018:
     1. porting lockless-link-list from linux kernel v4.14.43
 
+    2. porting rcu-list & hashtable, also add simple test cases.
+

@@ -8,6 +8,7 @@
 #include "radix-tree.h"
 #include "bitmap.h"
 #include "llist.h"
+#include "hashtable.h"
 
 
 typedef struct test_list_t {
@@ -28,6 +29,11 @@ typedef struct test_llist_t {
   int val;
   struct llist_node node ;
 } tll ;
+
+typedef struct test_hashtable_t {
+  int val;
+  struct hlist_node node ;
+} ht ;
 
 int g_caseCnt = 1;
 
@@ -353,6 +359,56 @@ int test_llist()
   return 0;
 }
 
+int test_hashtable()
+{
+  DEFINE_HASHTABLE(htable,16);
+  ht tx[] = {
+    {.val=10,},
+    {.val=11,},
+    {.val=12,},
+    {.val=13,},
+    {.val=14,},
+  } ;
+  int i;
+  ht *pt ;
+  struct hlist_node *n ;
+
+  printf("\n%d: test hash table\n\n",g_caseCnt++);
+
+  /**
+   * add
+   */
+  for (int i=0;i<ARRAY_SIZE(tx);i++) {
+    hash_add(htable,&tx[i].node,tx[i].val);
+    printf("adding %p -> %d\n",tx+i,tx[i].val);
+  }
+
+  /**
+   * iterate
+   */
+  printf("before: \n");
+
+  hash_for_each_safe(htable,i,n,pt,node) {
+    printf("h->val: %d\n",pt->val);
+  }
+
+  /**
+   * fetch
+   */
+  int key = 101 ;
+  struct hlist_head *pv = &htable[hash_min(key, HASH_BITS(htable))] ;
+
+  if (!pv || hlist_empty(pv)) {
+    printf("found nothing by %d\n",key);
+  }
+
+  hlist_for_each_entry_safe(pt,n,pv,node) {
+    printf("fetching ptr %p -> key %d\n",pt,key);
+  }
+
+  return 0;
+}
+
 int main()
 {
   test_list();
@@ -364,6 +420,8 @@ int main()
   test_bitmap();
 
   test_llist();
+
+  test_hashtable();
 
   return 0;
 }
