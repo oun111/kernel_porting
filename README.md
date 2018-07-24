@@ -1,2 +1,2 @@
 # kernel_porting
-## I will try to port linux kernel data structures to user space.
+## I am trying to port linux kernel data structures and common libraries to user space.
