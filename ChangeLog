@@ -7,3 +7,6 @@ Changes:
 
     2. porting rcu-list & hashtable, also add simple test cases.
 
+  Jul 24, 2018:
+    1. use a customize app entry name instead of the default one 'main'
+

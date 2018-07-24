@@ -3,6 +3,7 @@
 #include <stdint.h>
 #include <string.h>
 #include <ctype.h>
+#include <stdlib.h>
 #include "list.h"
 #include "rbtree.h"
 #include "radix-tree.h"
@@ -411,7 +412,7 @@ int test_hashtable()
   return 0;
 }
 
-int main()
+int APP_ENTRY()
 {
   test_list();
 
@@ -425,6 +426,6 @@ int main()
 
   test_hashtable();
 
-  return 0;
+  exit(0);
 }
 
