@@ -4,6 +4,14 @@
 
 #include "porting.h"
 
+
+#define SIZE_ALIGNED(sz) ({\
+  const int __BOUNDARY =  \
+    ((sz)<16 ? 16 : \
+    (sz)<32 ? 32 : 64) - 1 ;\
+  ((sz) + __BOUNDARY) & (~__BOUNDARY) ; \
+})
+
 /* FIXME: dummy */
 struct kmem_cache {
   char name[64];

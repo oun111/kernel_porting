@@ -7,6 +7,8 @@
 
 void* __malloc__(size_t sz)
 {
+  sz = SIZE_ALIGNED(sz);
+
   /* FIXME: don't use this */
   return malloc(sz);
 }
