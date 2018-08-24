@@ -10,6 +10,7 @@
 #include "bitmap.h"
 #include "llist.h"
 #include "hashtable.h"
+#include "myrbtree.h"
 
 
 typedef struct test_list_t {
@@ -86,6 +87,7 @@ int test_list()
   return 0;
 }
 
+#if 0
 int my_rb_tree_insert(struct rb_root *root, rt *item)
 {
   struct rb_node **p = &root->rb_node, *parent = 0 ;
@@ -140,6 +142,7 @@ int my_rb_tree_find(struct rb_root *root, int val, rt **item)
 
   return 0;
 }
+#endif
 
 int test_rbtree()
 {
@@ -162,13 +165,13 @@ int test_rbtree()
 
   /* insert tree node */
   for (int i=0;i<ARRAY_SIZE(rnx);i++) {
-    my_rb_tree_insert(&root,&rnx[i]);
+    MY_RB_TREE_INSERT(&root,&rnx[i],val,node);
   }
 
   /**
    * iterate
    */
-  rt *pos, *n ;
+  rt *pos = 0, *n = 0 ;
 
   rbtree_postorder_for_each_entry_safe(pos,n,&root,node) {
     printf("node %p, val %d\n",pos,pos->val);
@@ -177,7 +180,7 @@ int test_rbtree()
   /**
    * search
    */
-  ret = my_rb_tree_find(&root,300,&pos);
+  ret = MY_RB_TREE_FIND(&root,300,pos,val,node);
   if (ret) {
     printf("%s: not found\n",__func__);
   } else {
