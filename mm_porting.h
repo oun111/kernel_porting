@@ -28,8 +28,26 @@ extern void* kmem_cache_alloc(struct kmem_cache *cachep, gfp_t flags);
 
 extern void kmem_cache_free(struct kmem_cache *cachep, void *objp);
 
+#if 1
 extern void* kmalloc(size_t size, gfp_t flags);
 
 extern void kfree(const void *objp);
+
+extern void* krealloc(void *p, size_t newsize, gfp_t flags);
+#else
+#include <stdio.h>
+
+extern void* __malloc__(size_t sz) ;
+extern void __free__(void*) ;
+
+#define kmalloc(sz,f) ({\
+  printf("kmalloc caller %s\n",__func__);  \
+  __malloc__(sz); \
+})
+#define kfree(p) ({\
+  printf("kfree caller %s\n",__func__);  \
+  __free__(p); \
+})
+#endif
 
 #endif

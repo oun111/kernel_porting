@@ -3,14 +3,16 @@
 #include <stddef.h>
 #include <string.h>
 #include <ctype.h>
+#include <stdio.h>
 #include "mm_porting.h"
+
+
 
 void* __malloc__(size_t sz)
 {
-  sz = SIZE_ALIGNED(sz);
+  size_t sz1 = SIZE_ALIGNED(sz);
 
-  /* FIXME: don't use this */
-  return malloc(sz);
+  return malloc(sz1);
 }
 
 void __free__(void *p)
@@ -61,4 +63,9 @@ void* kmalloc(size_t size, gfp_t flags)
 void kfree(const void *objp)
 {
   __free__((void*)objp);
+}
+
+void* krealloc(void *p, size_t newsize, gfp_t flags)
+{
+  return realloc(p,newsize);
 }
