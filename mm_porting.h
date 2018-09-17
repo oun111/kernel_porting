@@ -6,8 +6,9 @@
 
 
 #define SIZE_ALIGNED(sz) ({\
-  const int __BOUNDARY =  \
-    ((sz)<16 ? 16 : \
+  const size_t __BOUNDARY =  \
+    ((sz)<8 ? 8 : \
+    (sz)<16 ? 16 : \
     (sz)<32 ? 32 : 64) - 1 ;\
   ((sz) + __BOUNDARY) & (~__BOUNDARY) ; \
 })
