@@ -11,37 +11,20 @@
 #include "llist.h"
 #include "hashtable.h"
 #include "myrbtree.h"
+#include "sort.h"
+#include "mm_porting.h"
 
 
-typedef struct test_list_t {
-  int val;
-  struct list_head node ;
-} tl ;
-
-typedef struct test_rbtree_t {
-  int val;
-  struct rb_node node;
-} rt ;
-
-typedef struct test_radixtree_t {
-  unsigned long val ;
-} xt ;
-
-typedef struct test_llist_t {
-  int val;
-  struct llist_node node ;
-} tll ;
-
-typedef struct test_hashtable_t {
-  int val;
-  struct hlist_node node ;
-} ht ;
 
 int g_caseCnt = 1;
 
 
 int test_list()
 {
+  typedef struct test_list_t {
+    int val;
+    struct list_head node ;
+  } tl ;
   LIST_HEAD(head) ;
   tl px[] = {
     {.val=10,},
@@ -87,65 +70,12 @@ int test_list()
   return 0;
 }
 
-#if 0
-int my_rb_tree_insert(struct rb_root *root, rt *item)
-{
-  struct rb_node **p = &root->rb_node, *parent = 0 ;
-  rt *prt ;
-
-  while (*p) {
-    parent  = *p ;
-    prt = rb_entry(parent,rt,node);
-    if (prt->val < item->val) {
-      p = &parent->rb_left ;
-    } else {
-      p = &parent->rb_right ;
-    }
-  }
-
-  /* insert new node */
-  item->node.__rb_parent_color = (unsigned long)parent; // FIXME: why ??
-  item->node.rb_left = item->node.rb_right = NULL ;
-  *p = &item->node ;
-
-  /* change color */
-  rb_insert_color(&item->node,root);
-
-  return 0;
-}
-
-int my_rb_tree_find(struct rb_root *root, int val, rt **item)
-{
-  struct rb_node **p = &root->rb_node, *parent = 0 ;
-  rt *prt ;
-
-  while (*p) {
-    parent  = *p ;
-    prt = rb_entry(parent,rt,node);
-    if (prt->val < val) {
-      p = &parent->rb_left ;
-    } else if (prt->val > val) {
-      p = &parent->rb_right ;
-    } else {
-      break ;
-    }
-  }
-
-  /* not found */
-  if (!*p) {
-    return -1;
-  }
-
-  if (item) {
-    *item = prt ;
-  }
-
-  return 0;
-}
-#endif
-
 int test_rbtree()
 {
+  typedef struct test_rbtree_t {
+    int val;
+    struct rb_node node;
+  } rt ;
   struct rb_root root = RB_ROOT;
   rt rnx[] = {
     {.val=1,},
@@ -204,6 +134,9 @@ int test_rbtree()
 
 int test_radixtree()
 {
+  typedef struct test_radixtree_t {
+    unsigned long val ;
+  } xt ;
   RADIX_TREE(root, GFP_KERNEL);
   xt ndx[] = {
      {.val = 12,},
@@ -284,6 +217,10 @@ int test_bitmap()
 
 int test_llist()
 {
+  typedef struct test_llist_t {
+    int val;
+    struct llist_node node ;
+  } tll ;
   LLIST_HEAD(head) ;
   tll px[] = {
     {.val=10,},
@@ -367,6 +304,10 @@ int test_hashtable()
 {
 #define hash_get(tbl,key)   ((tbl)[hash_min((key), HASH_BITS((tbl)))])
 
+  typedef struct test_hashtable_t {
+    int val;
+    struct hlist_node node ;
+  } ht ;
   DEFINE_HASHTABLE(htable,16);
   ht tx[] = {
     {.val=10,},
@@ -415,6 +356,64 @@ int test_hashtable()
   return 0;
 }
 
+typedef struct test_heap_sort_t {
+  int key;
+  long val ;
+} ths ;
+
+int hs_cmp(const void *k0, const void *k1)
+{
+  ths *pk0 = *(ths**)k0;
+  ths *pk1 = *(ths**)k1;
+
+  return pk0->key - pk1->key;
+}
+
+void hs_swap(void *a, void *b, int size)
+{
+  ths *tmp = *(ths**)a ;
+
+  *(ths**)a = *(ths**)b ;
+  *(ths**)b = tmp ;
+}
+
+int test_heap_sort()
+{
+  ths px[] = {
+    {.key=10,  .val=21,},
+    {.key=11,  .val=32L,},
+    {.key=101, .val=12,},
+    {.key=41, .val=121,},
+    {.key=1001, .val=132,},
+    {.key=32,  .val=13,},
+    {.key=320,  .val=3,},
+    {.key=62,  .val=14,},
+  } ;
+  ths **p = (ths**)kmalloc(sizeof(ths*)*ARRAY_SIZE(px),0L);
+
+
+  printf("\n%d: test heap sort\n\n",g_caseCnt++);
+
+  for (size_t i=0;i<ARRAY_SIZE(px);i++)
+    p[i] = &px[i] ;
+
+
+  printf("before sort: \n");
+  for (size_t i=0;i<ARRAY_SIZE(px);i++)
+    printf("%d:%ld\n",p[i]->key,p[i]->val);
+
+
+  sort(p,ARRAY_SIZE(px),sizeof(ths*),hs_cmp,hs_swap);
+
+
+  printf("after sort: \n");
+  for (size_t i=0;i<ARRAY_SIZE(px);i++)
+    printf("%d:%ld\n",p[i]->key,p[i]->val);
+
+  kfree(p);
+  return 0;
+}
+
 int APP_ENTRY()
 {
   test_list();
@@ -428,6 +427,8 @@ int APP_ENTRY()
   test_llist();
 
   test_hashtable();
+
+  test_heap_sort();
 
   exit(0);
 }
