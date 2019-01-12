@@ -70,6 +70,11 @@ int test_list()
   return 0;
 }
 
+static int compare(int v0, int v1)
+{
+  return v0>v1?1:v0<v1?-1:0;
+}
+
 int test_rbtree()
 {
   typedef struct test_rbtree_t {
@@ -95,7 +100,7 @@ int test_rbtree()
 
   /* insert tree node */
   for (int i=0;i<ARRAY_SIZE(rnx);i++) {
-    MY_RB_TREE_INSERT(&root,&rnx[i],val,node);
+    MY_RB_TREE_INSERT(&root,&rnx[i],val,node,compare);
   }
 
   /**
@@ -110,7 +115,7 @@ int test_rbtree()
   /**
    * search
    */
-  ret = MY_RB_TREE_FIND(&root,300,pos,val,node);
+  ret = MY_RB_TREE_FIND(&root,300,pos,val,node,compare);
   if (ret) {
     printf("%s: not found\n",__func__);
   } else {
