@@ -83,17 +83,46 @@
 })
 #endif
 
+
+/* 
+ * pre order iterate
+ */
 #define MY_RBTREE_PREORDER_FOR_EACH_ENTRY_SAFE(pos, n, root, field) \
 	for (pos = rb_entry_safe(rb_first(root), typeof(*pos), field); \
 	     pos && ({ n = rb_entry_safe(rb_next(&pos->field), \
 			typeof(*pos), field); 1; }); \
 	     pos = n)
 
+#define MY_RBTREE_PREORDER_FIRST_ENTRY(root,type,field) \
+  rb_entry_safe(rb_first(root), type, field)
+
+#define MY_RBTREE_PREORDER_REMAINING_ENTRIES(pos, n, root, field) \
+	for ( ; pos && ({ n = rb_entry_safe(rb_next(&pos->field), \
+			typeof(*pos), field); 1; }); \
+	     pos = n)
+
+#define MY_RBTREE_PREORDER_NEXT_NETRY(pos, field) \
+  rb_entry_safe(rb_next(&pos->field),typeof(*pos), field)
+
+
+/*
+ * sort order iterate
+ */
 #define MY_RBTREE_SORTORDER_FOR_EACH_ENTRY_SAFE(pos, n, root, field) \
 	for (pos = rb_entry_safe(rb_last(root), typeof(*pos), field); \
 	     pos && ({ n = rb_entry_safe(rb_prev(&pos->field), \
 			typeof(*pos), field); 1; }); \
 	     pos = n)
 
+#define MY_RBTREE_SORTORDER_FIRST_ENTRY(root,type,field) \
+  rb_entry_safe(rb_last(root), type, field)
+
+#define MY_RBTREE_SORTORDER_REMAINING_ENTRIES(pos, n, root, field) \
+	for ( ; pos && ({ n = rb_entry_safe(rb_prev(&pos->field), \
+			typeof(*pos), field); 1; }); \
+	     pos = n)
+
+#define MY_RBTREE_SORTORDER_NEXT_NETRY(pos, field) \
+  rb_entry_safe(rb_prev(&pos->field),typeof(*pos), field)
 
 #endif /* __MYRBTREE_H__*/
